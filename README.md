@@ -4,5 +4,5 @@
 This repository contains the data and code for "Pause-internal particles in university lectures" by Mikey Elmers and Jürgen Trouvain.
 
 ## License
-This code is licensed under the terms of the MIT license. See [LICENSE.md](https://github.com/MikeyElmers/paper_P&P22/blob/main/LICENSE.md)
+This code is licensed under the terms of the MIT license. See [LICENSE.md](https://github.com/MikeyElmers/paper_P-P22/blob/master/LICENSE.md)
 
