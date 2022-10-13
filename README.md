@@ -47,24 +47,24 @@ git clone https://github.com/MikeyElmers/paper_P-P22
     └── 04_plots.Rmd
 </pre>
 
-### 'data' contains
+### `data` contains
 - Raw data
 - Final data
 
-### 'docs' contains
-- 'elmers_pp22_abstract.pdf': P&P '22 abstract submission
-- 'elmers_pp22_poster.pdf': P&P '22 poster submission
+### `docs` contains
+- `elmers_pp22_abstract.pdf`: P&P '22 abstract submission
+- `elmers_pp22_poster.pdf`: P&P '22 poster submission
 
-### 'output' contains
+### `output` contains
 - Plots
-- 'sessionInfo.txt': R session info
+- `sessionInfo.txt`: R session info
 
-### 'scripts' contains
-- '00_renvRestore.R': Restores packages
-- '01_load.R': Load raw data
-- '02_clear.R': Cleans and exports final data
-- '03_eda.Rmd': Exploratory data analysis
-- '04_plots.Rmd': Generates plots
+### `scripts` contains
+- `00_renvRestore.R`: Restores packages
+- `01_load.R`: Load raw data
+- `02_clear.R`: Cleans and exports final data
+- `03_eda.Rmd`: Exploratory data analysis
+- `04_plots.Rmd`: Generates plots
 
 ## Issues/Comments/Suggestions
 Please use the [issue tracker](https://github.com/MikeyElmers/paper_P-P22/issues).
