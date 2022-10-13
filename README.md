@@ -1,7 +1,16 @@
 [![orcid](https://img.shields.io/badge/ORCID-0000--0002--3929--788X-green?style=plastic&logo=orcid&url=https://orcid.org/0000-0002-3929-788X)](https://orcid.org/0000-0002-3929-788X)
 
 # Pause-internal particles in university lectures
-This repository contains the data and code for "Pause-internal particles in university lectures" by Mikey Elmers and Jürgen Trouvain for the 18th Phonetik und Phonologie (P&P '22), Bielefeld, October 6-7.
+This repository contains the data and code for "Pause-internal particles in university lectures" by Mikey Elmers and Jürgen Trouvain for the 18th Phonetik und Phonologie (P&P '22), Bielefeld, October 6-7. This project investigates pause-internal particles (PINTs) in Yale university lectures and lectures from the TOEFL iBT Listening Practice.
+
+The following PINTs are investigated: 
+
+* silence (sil)
+* inhalation noise (in)
+* exhalation noise (ex)
+* filler particles (uh/um)
+* tongue click (cl)
+* other (o) such as cough, swallowing, laughter, etc.
 
 ## Installation
 ```
