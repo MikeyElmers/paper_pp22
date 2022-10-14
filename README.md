@@ -53,7 +53,10 @@ The following PINTs are investigated:
 │   ├── elmers_pp22_abstract.pdf
 │   └── elmers_pp22_poster.pdf
 ├── LICENSE.md
+├── Makefile
 ├── output
+│   ├── 02_eda.html
+│   ├── 03_plots.html
 │   ├── plot_between_lectures.png
 │   ├── plot_boxplot.png
 │   ├── plot_pie_chart.png
@@ -64,15 +67,9 @@ The following PINTs are investigated:
 ├── renv.lock
 └── scripts
     ├── 00_renvRestore.R
-    ├── 00_renvSnapshot.R
-    ├── 00_sessionInfo.R
-    ├── 00_test.R
-    ├── 01_load.R
-    ├── 02_clean.R
-    ├── 03_eda.html
-    ├── 03_eda.Rmd
-    ├── 04_plots.html
-    └── 04_plots.Rmd
+    ├── 01_clean.R
+    ├── 02_eda.Rmd
+    └── 03_plots.Rmd
 </pre>
 
 ### `data`
