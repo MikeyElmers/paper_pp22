@@ -23,6 +23,7 @@ The following PINTs are investigated:
     * [scripts](#scripts)
 - [Issues/comments/suggestions](#issuescommentssuggestions)
 - [License](#license)
+- [References](#references)
 
 ## Instructions
 1. Clone repository.
@@ -100,6 +101,17 @@ Please use the [issue tracker](https://github.com/MikeyElmers/paper_P-P22/issues
 
 ## License
 This code is licensed under the terms of the MIT license. See [LICENSE.md](https://github.com/MikeyElmers/paper_P-P22/blob/master/LICENSE.md)
+
+## References
+Langdon Hammer, Modern Poetry (Yale University: Open Yale Couses), http://oyc.yale.edu (Accessed June 27, 2022). License: Creative Commons BY-NC-SA
+
+John Wargo, Environmental Politics and Law (Yale University: Open Yale Couses), http://oyc.yale.edu (Accessed June 27, 2022). License: Creative Commons BY-NC-SA
+  
+John Merriman, European Civilization, 1648-1945 (Yale University: Open Yale Couses), http://oyc.yale.edu (Accessed June 27, 2022). License: Creative Commons BY-NC-SA
+    
+Keith Wrightson, Early Modern England: Politics, Religion, and Society under the Tudors and Stuarts (Yale University: Open Yale Couses), http://oyc.yale.edu (Accessed June 27, 2022). License: Creative Commons BY-NC-SA
+    
+Roberto González Echevarría, Cervantes' Don Quixote (Yale University: Open Yale Couses), http://oyc.yale.edu (Accessed June 27, 2022). License: Creative Commons BY-NC-SA
 
 
 
