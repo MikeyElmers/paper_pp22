@@ -5,3 +5,11 @@
 .Rdata
 .httr-oauth
 .DS_Store
+data/raw/20min/
+data/raw/full/
+data/raw/toefl/
+data/working/
+scripts/praat/
+scripts/00_test.R
+scripts/00_renvSnapshot.R
+scripts/00_sessionInfo.R
