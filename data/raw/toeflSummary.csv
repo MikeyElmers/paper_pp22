@@ -1,0 +1,4 @@
+name, nsyll, npause, dur(s), phonationtime(s), speechrate(nsyll/dur), articulation_rate(nsyll/phonationtime), ASD(speakingtime/nsyll), nrFP, tFP(s)
+Track15_noNarrator, 1098, 88, 358.18, 300.51, 3.07, 3.65, 0.274, 126, 31.006
+Track3_noNarrator, 984, 81, 328.28, 275.86, 3.00, 3.57, 0.280, 44, 9.882
+Track7_noNarrator, 809, 73, 264.49, 217.82, 3.06, 3.71, 0.269, 33, 6.920
