@@ -14,21 +14,26 @@ The following PINTs are investigated:
 
 ## Table Of Contents
 
-- [Installation](#installation)
+- [Instructions](#instructions)
 - [Directory information](#directory-information)
     * [Tree structure](#tree-structure)
     * [data](#data)
     * [docs](#docs)
     * [output](#output)
     * [scripts](#scripts)
-- [Instructions](#instructions)
 - [Issues/comments/suggestions](#issuescommentssuggestions)
 - [License](#license)
 
-## Installation
-```
-git clone https://github.com/MikeyElmers/paper_P-P22
-```
+## Instructions
+1. Clone repository.
+   ```bash
+   git clone https://github.com/MikeyElmers/paper_P-P22.git
+   cd paper_P-P22/
+   ```
+2. open `paper_P&P22.Rproj` project file
+
+3. run files from script directory in numerical order
+
 
 ## Directory Information
 ### Tree structure
@@ -82,17 +87,12 @@ git clone https://github.com/MikeyElmers/paper_P-P22
 - Plots
 - `sessionInfo.txt`: R session info
 
-### `scripts` (run in order listed below)
+### `scripts`
 - `00_renvRestore.R`: Restores packages
 - `01_load.R`: Load raw data
 - `02_clear.R`: Cleans and exports final data
 - `03_eda.Rmd`: Exploratory data analysis
 - `04_plots.Rmd`: Generates plots
-
-## Instructions
-- clone repository
-- open `paper_P&P22.Rproj` project file
-- run files from script directory in numerical order
 
 ## Issues/Comments/Suggestions
 Please use the [issue tracker](https://github.com/MikeyElmers/paper_P-P22/issues).
