@@ -1,8 +1,6 @@
 SCRIPT := ./scripts/
-DATA := ./data/final/
-OUTPUT := ./ouput/
 
-lectures:
+project:
 	Rscript ${SCRIPT}/00_renvRestore.R
 	Rscript ${SCRIPT}/01_clean.R
 	Rscript -e "rmarkdown::render(here::here('scripts/02_eda.Rmd'), output_dir = here::here('output'))"
