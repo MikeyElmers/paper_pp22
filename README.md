@@ -12,12 +12,26 @@ The following PINTs are investigated:
 * tongue click (cl)
 * other (o) such as cough, swallowing, laughter, etc.
 
+## Table Of Contents
+
+- [Installation](#installation)
+- [Directory information](#directory-information)
+    * [Tree structure](#tree-structure)
+    * [data](#data)
+    * [docs](#docs)
+    * [output](#output)
+    * [scripts](#scripts)
+- [Instructions](#instructions)
+- [Issues/comments/suggestions](#issuescommentssuggestions)
+- [License](#license)
+
 ## Installation
 ```
 git clone https://github.com/MikeyElmers/paper_P-P22
 ```
 
-## File Structure
+## Directory Information
+### Tree structure
 <pre>
 ├── data
 │   ├── final
@@ -56,24 +70,29 @@ git clone https://github.com/MikeyElmers/paper_P-P22
     └── 04_plots.Rmd
 </pre>
 
-### `data` contains
+### `data`
 - Raw data
 - Final data
 
-### `docs` contains
+### `docs`
 - `elmers_pp22_abstract.pdf`: P&P '22 abstract submission
 - `elmers_pp22_poster.pdf`: P&P '22 poster submission
 
-### `output` contains
+### `output`
 - Plots
 - `sessionInfo.txt`: R session info
 
-### `scripts` contains
+### `scripts` (run in order listed below)
 - `00_renvRestore.R`: Restores packages
 - `01_load.R`: Load raw data
 - `02_clear.R`: Cleans and exports final data
 - `03_eda.Rmd`: Exploratory data analysis
 - `04_plots.Rmd`: Generates plots
+
+## Instructions
+- clone repository
+- open `paper_P&P22.Rproj` project file
+- run files from script directory in numerical order
 
 ## Issues/Comments/Suggestions
 Please use the [issue tracker](https://github.com/MikeyElmers/paper_P-P22/issues).
