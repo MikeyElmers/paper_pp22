@@ -1,0 +1,255 @@
+---
+title: "plots"
+author: "Mikey Elmers"
+date: "9/21/2022"
+output: html_document
+---
+
+```{r, eval=FALSE, echo=FALSE}
+rmarkdown::render(here::here('scripts/03_plots.Rmd'),
+                  output_dir = here::here('output/'))
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r, , echo=FALSE}
+df_yale_pints <- read.csv(here::here("data/final/yale_pints.csv")) 
+```
+
+## Density plot for each PINT
+The following density plots for duration are aggregated for all speakers. Interestingly, I expected to find multiple peaks for the different PINTs but they all have a mostly unimodal distribution.
+
+### Silence
+```{r}
+df_yale_pints %>% 
+  filter(segment == "sil") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+### Inhalation
+```{r}
+df_yale_pints %>% 
+  filter(segment == "in") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+### Exhalation
+```{r}
+df_yale_pints %>% 
+  filter(segment == "ex") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+### Uh
+```{r}
+df_yale_pints %>% 
+  filter(segment == "uh") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+### Um
+```{r}
+df_yale_pints %>% 
+  filter(segment == "um") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+### Tongue click
+```{r}
+df_yale_pints %>% 
+  filter(segment == "cl") %>% 
+  ggplot(aes(x = dur)) +
+  geom_density()
+```
+
+
+
+## PINTs count
+This plot indicates the # of each individual PINT aggregated for all speakers.
+```{r}
+# aggregate count per pints type
+ggplot(df_yale_pints, aes(x = segment)) +
+  geom_bar()
+```
+
+## Individual PINTs proprotions
+This plot shows the proportion for each PINT aggregated for all speakers.
+```{r, echo=FALSE}
+# calculate total time of all files
+total_time = sum(unique(df_yale_pints$filedur))
+
+# other: total time, proportion of total time
+other_summary <- df_yale_pints %>% 
+  filter(segment == "other") %>% 
+  summarize(total_oth = sum(dur), prop_oth = total_oth / total_time * 100)
+
+# silence: total time, proportion of total time
+sil_summary <- df_yale_pints %>% 
+  filter(segment == "sil") %>%
+  summarize(total_sil = sum(dur), prop_sil = total_sil / total_time * 100)
+
+# inhalation: total time, proportion of total time
+in_summary <- df_yale_pints %>% 
+  filter(segment == "in") %>%
+  summarize(total_in = sum(dur), prop_in = total_in / total_time * 100)
+
+# exhalation: total time, proportion of total time
+ex_summary <- df_yale_pints %>% 
+  filter(segment == "ex") %>% 
+  summarize(total_ex = sum(dur), prop_ex = total_ex / total_time * 100)
+
+# uh: total time, proportion of total time
+uh_summary <- df_yale_pints %>% 
+  filter(segment == "uh") %>% 
+  summarize(total_uh = sum(dur), prop_uh = total_uh / total_time * 100)
+
+# um: total time, proportion of total time
+um_summary <- df_yale_pints %>% 
+  filter(segment == "um") %>% 
+  summarize(total_um = sum(dur), prop_um = total_um / total_time * 100)
+
+# click: total time, proportion of total time
+cl_summary <- df_yale_pints %>% 
+  filter(segment == "cl") %>% 
+  summarize(total_cl = sum(dur), prop_cl = total_cl / total_time * 100)
+```
+
+```{r, echo=FALSE}
+df_yale_prop <- data.frame(segment = c("sil", "in", "ex", "uh", "um", "cl", "other"),
+                           prop_total = c(sil_summary$prop_sil, in_summary$prop_in, ex_summary$prop_ex, uh_summary$prop_uh,
+                                          um_summary$prop_um, cl_summary$prop_cl, other_summary$prop_oth))
+
+# factor to re-organize order of segments on x-axis
+df_yale_prop$segment <- factor(df_yale_prop$segment,
+                      levels = c("sil", "in", "uh", "ex", "um", "other", "cl"))
+```
+
+```{r}
+ggplot(df_yale_prop, aes(x = segment, y = prop_total)) +
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = round(prop_total, 1)), position = position_dodge(width = 0.9), vjust = -0.5) +
+  ylim(0, 15) + 
+  labs(x = "PINTs", y = "% of Total Duration") 
+```
+
+## Speaker comparison between lectures
+This barplot shows the different PINTs usage for each speaker over the three sessions (indicated in color). Speakers tend to be consistent with their PINTs usage across the three sessions. 
+
+Different speakers prefer different PINTs. For example, speaker 1 uses many more "uh" compared to speaker 4. 
+```{r, echo=FALSE}
+# fact label names for files
+sp.lab <- c("Speaker 1", "Speaker 2", "Speaker 3", "Speaker 4", "Speaker 5")
+names(sp.lab) <- c(1, 2, 3, 4, 5)
+```
+
+```{r, warning=FALSE}
+ggplot(df_yale_pints, aes(x = segment, fill = session)) + 
+  geom_bar(position = position_dodge()) +
+  scale_x_discrete(limits = c("sil", "in", "ex", "uh", "um", "cl")) +
+  labs(x = "PINTs", y = "Count") +
+  facet_wrap(vars(speaker), ncol = 5, labeller = labeller(speaker = sp.lab)) +
+  theme(panel.spacing.x = unit(1, "lines"))
+```
+
+## The following plots are saved into the output directory and used for the poster publication
+### Between-/within- speaker barplot
+```{r, warning=FALSE}
+plot_between_lectures <- ggplot(df_yale_pints, aes(x = segment, fill = session)) + 
+  geom_bar(position = position_dodge()) +
+  scale_x_discrete(limits = c("sil", "in", "ex", "uh", "um", "cl"), expand = c(0, 1)) +
+  scale_fill_discrete(name = "Session", labels = c("First", "Second", "Third")) +
+  labs(x = "PINTs", y = "Count") +
+  facet_wrap(vars(speaker), ncol = 5, labeller = labeller(speaker = sp.lab)) +
+  theme(panel.spacing.x = unit(1, "lines"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        axis.text.x = element_text(angle = 45),
+        strip.background = element_blank(),
+        text = element_text(size = 32))
+
+ggsave(here::here("output/plot_between_lectures.png"), plot_between_lectures, width = 18, height = 10, units = c("in"))
+```
+
+### PINTs proportion barplot
+```{r, warning=FALSE}
+plot_prop_bar <- ggplot(df_yale_prop, aes(x = segment, y = prop_total)) +
+  geom_bar(stat = "identity",
+           fill = "#F8766D", 
+           color = "black") + 
+  geom_text(aes(label = round(prop_total, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5,
+            size = 14) +
+  ylim(0, 15) + 
+  labs(x = "PINTs", y = "% of Total Speaking Time") +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text = element_text(size = 28),
+        axis.title = element_text(size = 36),
+        axis.title.x = element_blank())
+
+ggsave(here::here("output/plot_prop_bar.png"), plot_prop_bar, width = 18, height = 10, units = c("in"), bg = "transparent")
+```
+
+### PINTs pie chart
+```{r, warning=FALSE}
+df_pie_chart <- data_frame(
+  Label = c("PINTs", "Speech"),
+  value = c("29.4%", "70.6%")
+)
+
+plot_pie_chart <- ggplot(df_pie_chart, aes(x = "", y = value, fill = Label)) +
+  geom_bar(stat = "identity", width = 1) +
+  geom_text(aes(label = value), 
+            position = position_stack(vjust = 0.5),
+            size = 14) +
+  coord_polar("y", start = 360) +
+  theme_void() +
+  theme(legend.key.size = unit(.75, "in"),
+        legend.title = element_text(size = 36),
+        legend.text = element_text(size = 28))
+
+ggsave(here::here("output/plot_pie_chart.png"), plot_pie_chart, width = 18, height = 10, units = c("in"))
+```
+
+### PINTs duration boxplot
+```{r, warning=FALSE}
+df_yale_boxplot <- df_yale_pints
+df_yale_boxplot$segment <- factor(df_yale_boxplot$segment, levels = c("sil", "in", "uh", "ex", "um", "other", "cl"))
+
+plot_boxplot <- ggplot(df_yale_boxplot, aes(x = segment, y = dur, fill = "#F8766D")) + 
+  geom_boxplot() +
+  ylim(0,1.0) +
+  xlab("PINTs") +
+  ylab("Duration (s)") +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        legend.position = "none",
+        axis.text = element_text(size = 28),
+        axis.title = element_text(size = 36),
+        axis.title.x = element_blank())
+
+ggsave(here::here("output/plot_boxplot.png"), plot_boxplot, width = 18, height = 10, units = c("in"))
+```
+
+

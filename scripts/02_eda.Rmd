@@ -1,0 +1,416 @@
+---
+title: "Exploratory Data Analysis (EDA)"
+author: "Mikey Elmers"
+date: "9/21/2022"
+output: html_document
+---
+
+```{r, eval=FALSE, echo=FALSE}
+rmarkdown::render(here::here('scripts/02_eda.Rmd'),
+                  output_dir = here::here('output/'))
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## Overview
+This document investigates pause-internal particles (PINTs) in Yale university lectures and lectures from the TOEFL iBT Listening Practice. These analyses are part of:
+
+Elmers, M. & Trouvain, J. 2022. Pause-internal particles in university lectures. Poster presentation, 18th Phonetik & Phonologie (P&P '22), Bielefeld, October 06-07.
+
+### Yale lectures
+Lectures taken from [Open Yale Courses](https://oyc.yale.edu). Five speakers were selected. Each speaker has three sessions annotated over the semester.
+
+1. [Langdon Hammer](https://oyc.yale.edu/english/engl-310) 
+    + Course Number: ENGL 310
+    + Course Name: Modern Poetry
+    + Sessions: 25
+  
+2. [John Wargo](https://oyc.yale.edu/environmental-studies/evst-255) 
+    + Course Number: EVST 255
+    + Course Name: Environmental Politics and Law
+    + Sessions: 24
+    
+3. [John Merriman](https://oyc.yale.edu/history/hist-202) 
+    + Course Number: HIST 202
+    + Course Name: European Civilization, 1648-1945
+    + Sessions: 24
+    
+4. [Keith Wrightson](https://oyc.yale.edu/history/hist-251) 
+    + Course Number: HIST 251
+    + Course Name: Early Modern England: Politics, Religion, and Society under the Tudors and Stuarts
+    + Sessions: 25
+    
+5. [Roberto González Echevarría](https://oyc.yale.edu/spanish-and-portuguese/span-300)
+    + Course Number: SPAN 300
+    + Course Name: Cervantes' Don Quixote
+    + Sessions: 24
+
+### TOEFL lecture listening practice
+The TOEFL lecture listening practice were downloaded from https://www.ets.org/toefl/test-takers/ibt/prepare/practice-tests.html from the section titled "TOEFL iBT Listening Practice Sets with audio tracks (zip)." The file names correspond to the audio file names from the TOEFL iBT listening practice questions with the "_noNarrator" indicating that the narrator describing the task had been removed from the beginning of the audio file.
+
+## Dataframe codebook
+The following PINTs are investigated: 
+
+* silence (sil)
+* inhalation noise (in)
+* exhalation noise (ex)
+* filler particles (uh/um)
+* tongue click (cl)
+* other (o) such as cough, swallowing, laughter, etc.
+Only relevant columns are described here. Additional information (e.g., intensity and articulation rate) is kept for potential future analyses but was not found relevant at this time.
+
+Variable Name         | Description
+---                   | ---
+file                  | course name_session_duration (e.g., "engl310_01_20min")
+segment               | annnotation label (e.g., "sil" for silence)
+start                 | start time for segment label
+end                   | end time for segment label
+dur                   | duration for segment label (i.e., end - start)
+filedur               | duration for the entire session (i.e., all rows for "engl310_01_20min" will have the same filedur)
+speechrate.nsyll.dur. | speech rate = number of syllables / total time (# of syllables / second)
+pints                 | number of PINTs for the entire session (i.e., all rows for "engl310_01_20min" will have the same # of pints)
+pintsrate             | pints rate = number of PINTs / total time (# of PINTs / second)
+
+```{r, echo=FALSE}
+df_yale_all <- read.csv(here::here("data/final/yale_all.csv"))
+df_yale_pints <- read.csv(here::here("data/final/yale_pints.csv"))
+
+df_toefl_all <- read.csv(here::here("data/final/toefl_all.csv"))
+df_toefl_pints <- read.csv(here::here("data/final/toefl_pints.csv"))
+```
+
+## Total number of PINTs
+### Yale lectures
+Approximately 22,000 annotations were made for the Yale lectures.
+
+```{r}
+df_yale_pints %>%
+  count(segment) %>% 
+  summarize(total = sum(n))
+```
+
+### TOEFL lecture listening practice
+The amount of material available for the TOEFL lecture listening practice was significantly less than what was annotated for the Yale lectures. This is reflected in the count values and file duration. A total of 780 annotations were made for the TOEFL data.
+```{r}
+df_toefl_pints %>%
+  count(segment) %>% 
+  summarize(total = sum(n))
+```
+
+## Total duration of all files (in hours)
+### Yale lectures
+Five hours of material was annotated (1 hour for each speaker) for the Yale lectures. 
+```{r, echo=FALSE}
+sum(unique(df_yale_pints$filedur)) / 3600
+```
+
+### TOEFL lecture listening practice
+Approximately 15 minutes was annotated for the TOEFL lecture listening tests.
+```{r, echo=FALSE}
+sum(unique(df_toefl_pints$filedur)) / 60
+```
+
+## Count information
+### Yale lectures
+Silences were by far the most frequent in their number. This is to be expected since silences could be used for a variety of functions such as hesitation, left and right edge silences adjacent to filler particles and breath noises, task changes, etc. 
+
+Inhalations are the second most common which can be explained by the necessity for respiration.
+
+The third most frequent annotation was the filler particle "uh" and was far more frequent compared to the other filler particle "um". 
+```{r}
+df_yale_pints %>% 
+  count(segment) %>% 
+  arrange(desc(n))
+```
+
+### TOEFL lecture listening practice
+A similar pattern emerges for the TOEFL lecture listening tests which also include silence, inhalations, and the filler particle "uh" as the most common PINTs.
+```{r}
+df_toefl_pints %>% 
+  count(segment) %>% 
+  arrange(desc(n))
+```
+
+## Descriptive statistics for duration (in seconds)
+The minimum, maximum, mean, standard deviation, total duration, and proportion of total time (% out of 100) for each annotation category is found below.
+
+```{r, echo=FALSE}
+# calculate total time of all files
+total_time = sum(unique(df_yale_all$filedur))
+
+# duration information
+# non-pints: min, max, mean, sd, total time, proportion of total time
+np_summary <- df_yale_all %>% 
+  filter(segment == "np") %>% 
+  summarize(min_np = min(dur), max_np = max(dur), mean_np = mean(dur), sd_np = sd(dur), total_np = sum(dur), prop_np = total_np / total_time * 100)
+
+# other: min, max, mean, sd, total time, proportion of total time
+other_summary <- df_yale_all %>% 
+  filter(segment == "other") %>% 
+  summarize(min_oth = min(dur), max_oth = max(dur), mean_oth = mean(dur), sd_oth = sd(dur), total_oth = sum(dur), prop_oth = total_oth / total_time * 100)
+
+# silence: min, max, mean, sd, total time, proportion of total time
+sil_summary <- df_yale_all %>% 
+  filter(segment == "sil") %>%
+  summarize(min_sil = min(dur), max_sil = max(dur), mean_sil = mean(dur), sd_sil = sd(dur), total_sil = sum(dur), prop_sil = total_sil / total_time * 100)
+
+# inhalation: min, max, mean, sd, total time, proportion of total time
+in_summary <- df_yale_all %>% 
+  filter(segment == "in") %>%
+  summarize(min_in = min(dur), max_in = max(dur), mean_in = mean(dur), sd_in = sd(dur), total_in = sum(dur), prop_in = total_in / total_time * 100)
+
+# exhalation: min, max, mean, sd, total time, proportion of total time
+ex_summary <- df_yale_all %>% 
+  filter(segment == "ex") %>% 
+  summarize(min_ex = min(dur), max_ex = max(dur), mean_ex = mean(dur), sd_ex = sd(dur), total_ex = sum(dur), prop_ex = total_ex / total_time * 100)
+
+# uh: min, max, mean, sd, total time, proportion of total time
+uh_summary <- df_yale_all %>% 
+  filter(segment == "uh") %>% 
+  summarize(min_uh = min(dur), max_uh = max(dur), mean_uh = mean(dur), sd_uh = sd(dur), total_uh = sum(dur), prop_uh = total_uh / total_time * 100)
+
+# um: min, max, mean, sd, total time, proportion of total time
+um_summary <- df_yale_all %>% 
+  filter(segment == "um") %>% 
+  summarize(min_um = min(dur), max_um = max(dur), mean_um = mean(dur), sd_um = sd(dur), total_um = sum(dur), prop_um = total_um / total_time * 100)
+
+# click: min, max, mean, sd, total time, proportion of total time
+cl_summary <- df_yale_all %>% 
+  filter(segment == "cl") %>% 
+  summarize(min_cl = min(dur), max_cl = max(dur), mean_cl = mean(dur), sd_cl = sd(dur), total_cl = sum(dur), prop_cl = total_cl / total_time * 100)
+```
+
+### Yale lectures
+#### Non-PINTs
+```{r, echo=FALSE}
+np_summary
+```
+
+#### Other
+```{r, echo=FALSE}
+other_summary
+```
+
+#### Silence
+```{r, echo=FALSE}
+sil_summary
+```
+
+#### Inhalation
+```{r, echo=FALSE}
+in_summary
+```
+
+#### Exhalation
+```{r, echo=FALSE}
+ex_summary
+```
+
+#### Uh
+```{r, echo=FALSE}
+uh_summary
+```
+
+#### Um
+```{r, echo=FALSE}
+um_summary
+```
+
+#### Tongue click
+```{r, echo=FALSE}
+cl_summary
+```
+
+### TOEFL lecture listening practice
+```{r, echo=FALSE}
+# calculate total time of all files
+total_time = sum(unique(df_toefl_all$filedur))
+
+# duration information
+# non-pints: min, max, mean, sd, total time, proportion of total time
+np_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "np") %>% 
+  summarize(min_np = min(dur), max_np = max(dur), mean_np = mean(dur), sd_np = sd(dur), total_np = sum(dur), prop_np = total_np / total_time * 100)
+
+# other: min, max, mean, sd, total time, proportion of total time
+other_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "other") %>% 
+  summarize(min_oth = min(dur), max_oth = max(dur), mean_oth = mean(dur), sd_oth = sd(dur), total_oth = sum(dur), prop_oth = total_oth / total_time * 100)
+
+# silence: min, max, mean, sd, total time, proportion of total time
+sil_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "sil") %>%
+  summarize(min_sil = min(dur), max_sil = max(dur), mean_sil = mean(dur), sd_sil = sd(dur), total_sil = sum(dur), prop_sil = total_sil / total_time * 100)
+
+# inhalation: min, max, mean, sd, total time, proportion of total time
+in_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "in") %>%
+  summarize(min_in = min(dur), max_in = max(dur), mean_in = mean(dur), sd_in = sd(dur), total_in = sum(dur), prop_in = total_in / total_time * 100)
+
+# exhalation: min, max, mean, sd, total time, proportion of total time
+ex_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "ex") %>% 
+  summarize(min_ex = min(dur), max_ex = max(dur), mean_ex = mean(dur), sd_ex = sd(dur), total_ex = sum(dur), prop_ex = total_ex / total_time * 100)
+
+# uh: min, max, mean, sd, total time, proportion of total time
+uh_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "uh") %>% 
+  summarize(min_uh = min(dur), max_uh = max(dur), mean_uh = mean(dur), sd_uh = sd(dur), total_uh = sum(dur), prop_uh = total_uh / total_time * 100)
+
+# um: min, max, mean, sd, total time, proportion of total time
+um_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "um") %>% 
+  summarize(min_um = min(dur), max_um = max(dur), mean_um = mean(dur), sd_um = sd(dur), total_um = sum(dur), prop_um = total_um / total_time * 100)
+
+# click: min, max, mean, sd, total time, proportion of total time
+cl_summary_toefl <- df_toefl_all %>% 
+  filter(segment == "cl") %>% 
+  summarize(min_cl = min(dur), max_cl = max(dur), mean_cl = mean(dur), sd_cl = sd(dur), total_cl = sum(dur), prop_cl = total_cl / total_time * 100)
+```
+
+#### Non-PINTs
+```{r, echo=FALSE}
+np_summary_toefl
+```
+
+#### Other
+```{r, echo=FALSE}
+other_summary_toefl
+```
+
+#### Silence
+```{r, echo=FALSE}
+sil_summary_toefl
+```
+
+#### Inhalation
+```{r, echo=FALSE}
+in_summary_toefl
+```
+
+#### Exhalation
+```{r, echo=FALSE}
+ex_summary_toefl
+```
+
+#### Uh
+```{r, echo=FALSE}
+uh_summary_toefl
+```
+
+#### Um
+```{r, echo=FALSE}
+um_summary_toefl
+```
+
+#### Tongue click
+```{r, echo=FALSE}
+cl_summary_toefl
+```
+
+## PINTs duration proportion
+### Yale lectures
+PINTs comprise approximately 30% of the entire duration for the Yale lectures.
+```{r}
+other_summary$prop_oth + sil_summary$prop_sil + in_summary$prop_in + ex_summary$prop_ex + uh_summary$prop_uh + um_summary$prop_um + cl_summary$prop_cl
+```
+
+Silences, inhalation noises and the filler particle 'uh' account for a majority of the 30% for the Yale lectures. 
+```{r}
+sil_summary$prop_sil + in_summary$prop_in + uh_summary$prop_uh
+```
+
+### TOEFL lecture listening practice
+Approximately 20% of the entire duration is PINTs for the TOEFL lecture listening tests.
+```{r}
+other_summary_toefl$prop_oth + sil_summary_toefl$prop_sil + in_summary_toefl$prop_in + ex_summary_toefl$prop_ex + uh_summary_toefl$prop_uh + um_summary_toefl$prop_um + cl_summary_toefl$prop_cl
+```
+
+Additionally, silences, inhalation noises, and the filler particle 'uh' account for a majority of the 20% for the TOEFL lecture listening tests.
+```{r}
+sil_summary_toefl$prop_sil + in_summary_toefl$prop_in + uh_summary_toefl$prop_uh
+```
+
+### Yale lectures
+Speakers from the Yale lectures differ significantly in the proportion of PINTs with some having PINTs accounting for 40% of their total time and others with a proportion of half that.
+
+* total_dur_pints: duration (in seconds) for all PINTs for that speaker
+* total_dur_speakingtime: duration (in seconds) for the entire speaking time
+* prop: proportion (% out of 100) for PINTs duration out of entire speaking time
+```{r}
+df_yale_pints %>% 
+  group_by(speaker) %>% 
+  summarize(total_dur_pints = sum(dur), total_dur_speakingtime = sum(unique(filedur)), prop = total_dur_pints / total_dur_speakingtime * 100) %>% 
+  ungroup()
+```
+
+### TOEFL lecture listening practice
+The proportion of PINTs for the TOEFL lecture listening practice are quite similar to each other. Additionally, the highest proportion (22.75%) for TOEFL is approximately the low end for the Yale lectures (21.8%).
+```{r}
+df_toefl_pints %>% 
+  group_by(file) %>% 
+  summarize(total_dur_pints = sum(dur), total_dur_speakingtime = sum(unique(filedur)), prop = total_dur_pints / total_dur_speakingtime * 100) %>% 
+  ungroup()
+```
+
+## PINTs rate per file
+### Yale lectures
+The PINTs rate per file can be found below measured in PINTs/second. Therefore, for the file "engl310_01_20min" the speaker used 1.54 PINTs per second. The speakers differ in their PINTs rate but are consistent with themselves throughout the three sessions.
+
+These values are higher than anticipated since the content comes from speakers teaching university lectures where time is precious, and these speakers are very familiar with their topics.
+
+```{r}
+df_yale_pints %>% 
+  group_by(file) %>% 
+  distinct(pintsrate) %>% 
+  ungroup()
+```
+
+## PINTs rate and speech rate
+Note: the speaker from span300 had the exact same speech rate for two files (01 and 13), so the speech rate for session 13 was adjusted from 2.63 -> 2.64 to allow for calculations.
+
+```{r, echo=FALSE}
+df_yale_sp_rate <- df_yale_pints
+df_yale_sp_rate$speechrate.nsyll.dur.[df_yale_sp_rate$file == "span300_13_20min"] <- 2.64
+```
+
+### Yale lectures
+* speech_rate = number of syllables / total time (# of syllables / second)
+* pints_rate = number of PINTs / total time (# of PINTs / second)
+
+There is a low correlation between speech rate and pints rate indicating that speech rate and PINTs rate do not have a strong relationship. Additionally, the covariance between these two variables is near 0 meaning that they don't vary together. 
+
+```{r}
+cor_values_yale <- df_yale_sp_rate %>% 
+  group_by(speaker) %>% 
+  summarize(speech_rate = sum(unique(speechrate.nsyll.dur.)) / 3, 
+            pints_rate = sum(unique(pintsrate)) / 3) %>% 
+  ungroup()
+
+cor_values_yale
+cor(cor_values_yale$speech_rate, cor_values_yale$pints_rate)
+cov(cor_values_yale$speech_rate, cor_values_yale$pints_rate)
+```
+
+### TOEFL lecture listening practice
+Similar to the Yale lectures, there is a low correlation between speech rate and PINTs rate indicating that speech rate and pints rate do not have a strong relationship. Additionally, the covariance between these two variables is near 0 meaning that they don't vary together.
+```{r}
+cor_values <- df_toefl_pints %>% 
+  group_by(file) %>% 
+  summarize(speech_rate = sum(unique(speechrate.nsyll.dur.)), 
+            pints_rate = sum(unique(pintsrate))) %>% 
+  ungroup()
+
+cor_values
+cor(cor_values$speech_rate, cor_values$pints_rate)
+cov(cor_values$speech_rate, cor_values$pints_rate)
+```
+
+
