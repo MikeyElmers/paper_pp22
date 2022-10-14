@@ -91,10 +91,9 @@ NOTE: This will delete all the data from the `data/final/` as well as everything
 
 ### `scripts`
 - `00_renvRestore.R`: Restores packages
-- `01_load.R`: Load raw data
-- `02_clear.R`: Cleans and exports final data
-- `03_eda.Rmd`: Exploratory data analysis
-- `04_plots.Rmd`: Generates plots
+- `01_clean.R`: Cleans and exports final data
+- `02_eda.Rmd`: Exploratory data analysis
+- `03_plots.Rmd`: Generates plots
 
 ## Issues/Comments/Suggestions
 Please use the [issue tracker](https://github.com/MikeyElmers/paper_P-P22/issues).
