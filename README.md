@@ -16,7 +16,7 @@ The following PINTs are investigated:
 
 - [Instructions](#instructions)
 - [Directory information](#directory-information)
-    * [Tree structure](#tree-structure)
+    * [tree structure](#tree-structure)
     * [data](#data)
     * [docs](#docs)
     * [output](#output)
