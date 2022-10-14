@@ -36,7 +36,7 @@ The following PINTs are investigated:
 NOTE: This will delete all the data from the `data/final/` as well as everything in `output/` except for sessionInfo.txt to run the pipeline from scratch. 
    ```bash
    make clean
-   make 
+   make project
    ```
 
 ## Directory Information
