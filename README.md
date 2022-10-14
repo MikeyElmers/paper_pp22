@@ -86,6 +86,7 @@ NOTE: This will delete all the data from the `data/final/` as well as everything
 
 ### `output`
 - Plots
+- Rmarkdown documents
 - `sessionInfo.txt`: R session info
 
 ### `scripts`
