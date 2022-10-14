@@ -30,13 +30,18 @@ The following PINTs are investigated:
    git clone https://github.com/MikeyElmers/paper_P-P22.git
    cd paper_P-P22/
    ```
-2. open `paper_P&P22.Rproj` project file
+2. Plots, Rmarkdown documents, and the sessionInfo are located in `output/`. The P&P '22 abstract and poster are located in `docs`.
 
-3. run files from script directory in numerical order
+open `paper_P&P22.Rproj` project file
 
+3. If you would like to re-run the entire analysis. This will delete all the data from the `data/final/` as well as everything in `output/` except for sessionInfo.txt to run the pipeline from scratch. 
+   ```bash
+   make clean
+   make 
+   ```
 
 ## Directory Information
-### Tree structure
+### tree structure
 <pre>
 ├── data
 │   ├── final
