@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2022 paper_P&P22 authors
+Copyright (c) 2022 paper_pp22 authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
