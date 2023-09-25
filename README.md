@@ -28,8 +28,8 @@ The following PINTs are investigated:
 ## Instructions
 1. Clone repository.
    ```bash
-   git clone https://github.com/MikeyElmers/paper_P-P22.git
-   cd paper_P-P22/
+   git clone https://github.com/MikeyElmers/paper_pp22.git
+   cd paper_pp22/
    ```
 2. Plots, Rmarkdown documents, and the sessionInfo are located in `output/`. The P&P '22 abstract and poster are located in `docs`.
 
